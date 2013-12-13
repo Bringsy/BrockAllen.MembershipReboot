@@ -3,16 +3,13 @@
  * see license.txt
  */
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
+using System.Collections.Generic;
 namespace BrockAllen.MembershipReboot
 {
-    public interface IMessageFormatter
+    public interface IMessageFormatter<TAccount>
+        where TAccount : UserAccount
     {
-        Message Format(UserAccountEvent accountEvent);
+        Message Format(UserAccountEvent<TAccount> accountEvent, IDictionary<string, string> values);
     }
 }

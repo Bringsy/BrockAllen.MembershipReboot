@@ -12,7 +12,7 @@ namespace BrockAllen.MembershipReboot
          where T : class
     {
         IQueryable<T> GetAll();
-        T Get(params object[] keys);
+        T Get(Guid key);
         T Create();
         void Add(T item);
         void Remove(T item);

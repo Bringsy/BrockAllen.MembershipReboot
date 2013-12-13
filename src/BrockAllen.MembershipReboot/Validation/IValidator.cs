@@ -3,17 +3,14 @@
  * see license.txt
  */
 
-using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace BrockAllen.MembershipReboot
 {
-    public interface IValidator
+    public interface IValidator<TAccount>
+        where TAccount : UserAccount
     {
-        ValidationResult Validate(UserAccountService service, UserAccount account, string value);
+        ValidationResult Validate(UserAccountService<TAccount> service, TAccount account, string value);
     }
 }
+    

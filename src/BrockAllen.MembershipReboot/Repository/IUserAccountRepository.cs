@@ -3,9 +3,15 @@
  * see license.txt
  */
 
+using System;
+using System.Collections.Generic;
+using System.Linq;
 namespace BrockAllen.MembershipReboot
 {
-    public interface IUserAccountRepository : IRepository<UserAccount>
+    public interface IUserAccountRepository<TAccount> : IRepository<TAccount>
+        where TAccount : UserAccount
     {
     }
+    
+    public interface IUserAccountRepository : IUserAccountRepository<UserAccount> { }
 }

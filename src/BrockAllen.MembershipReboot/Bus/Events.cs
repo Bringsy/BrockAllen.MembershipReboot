@@ -5,16 +5,13 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace BrockAllen.MembershipReboot
 {
     public interface IEvent { }
     public interface IEventSource
     {
-        IEnumerable<IEvent> Events { get; }
+        IEnumerable<IEvent> GetEvents();
         void Clear();
     }
 

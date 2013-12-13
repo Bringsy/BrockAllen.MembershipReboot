@@ -5,86 +5,99 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Security.Claims;
 
 namespace BrockAllen.MembershipReboot
 {
-    public class MembershipRebootConfiguration
+    public class MembershipRebootConfiguration<TAccount>
+        where TAccount : UserAccount
     {
-        public MembershipRebootConfiguration(SecuritySettings securitySettings, Func<IUserAccountRepository> factoryFunc)
-            : this(securitySettings, new DelegateFactory(factoryFunc))
+        public MembershipRebootConfiguration()
+            : this(SecuritySettings.Instance)
         {
-            if (factoryFunc == null) throw new ArgumentNullException("factoryFunc");
-        }
-        
-        public MembershipRebootConfiguration(Func<IUserAccountRepository> factoryFunc)
-            : this(new DelegateFactory(factoryFunc))
-        {
-            if (factoryFunc == null) throw new ArgumentNullException("factoryFunc");
         }
 
-        public MembershipRebootConfiguration(SecuritySettings securitySettings, IFactory factory)
+        public MembershipRebootConfiguration(SecuritySettings securitySettings)
         {
             if (securitySettings == null) throw new ArgumentNullException("securitySettings");
-            if (factory == null) throw new ArgumentNullException("factory");
+            
+            this.MultiTenant = securitySettings.MultiTenant;
+            this.DefaultTenant = securitySettings.DefaultTenant;
+            this.EmailIsUsername = securitySettings.EmailIsUsername;
+            this.UsernamesUniqueAcrossTenants = securitySettings.UsernamesUniqueAcrossTenants;
+            this.RequireAccountVerification = securitySettings.RequireAccountVerification;
+            this.AllowLoginAfterAccountCreation = securitySettings.AllowLoginAfterAccountCreation;
+            this.AccountLockoutFailedLoginAttempts = securitySettings.AccountLockoutFailedLoginAttempts;
+            this.AccountLockoutDuration = securitySettings.AccountLockoutDuration;
+            this.AllowAccountDeletion = securitySettings.AllowAccountDeletion;
+            this.PasswordHashingIterationCount = securitySettings.PasswordHashingIterationCount;
+            this.PasswordResetFrequency = securitySettings.PasswordResetFrequency;
 
-            this.factory = factory;
-            this.SecuritySettings = securitySettings;
+            this.Crypto = new DefaultCrypto();
         }
 
-        public MembershipRebootConfiguration(SecuritySettings securitySettings, IUserAccountRepository userAccountRepository)
-            : this(securitySettings, new DelegateFactory(()=>userAccountRepository))
-        {
-            if (userAccountRepository == null) throw new ArgumentNullException("userAccountRepository");
-        }
+        public bool MultiTenant { get; set; }
+        public string DefaultTenant { get; set; }
+        public bool EmailIsUsername { get; set; }
+        public bool UsernamesUniqueAcrossTenants { get; set; }
+        public bool RequireAccountVerification { get; set; }
+        public bool AllowLoginAfterAccountCreation { get; set; }
+        public int AccountLockoutFailedLoginAttempts { get; set; }
+        public TimeSpan AccountLockoutDuration { get; set; }
+        public bool AllowAccountDeletion { get; set; }
+        public int PasswordHashingIterationCount { get; set; }
+        public int PasswordResetFrequency { get; set; }
 
-        public MembershipRebootConfiguration(IFactory factory)
-            : this(SecuritySettings.Instance, factory)
-        {
-        }
-
-        public MembershipRebootConfiguration(IUserAccountRepository userAccountRepository)
-            : this(new DelegateFactory(() => userAccountRepository))
-        {
-            if (userAccountRepository == null) throw new ArgumentNullException("userAccountRepository");
-        }
-
-        public SecuritySettings SecuritySettings { get; private set; }
-
-        IFactory factory;
-        public IUserAccountRepository CreateUserAccountRepository()
-        {
-            return factory.CreateUserAccountRepository();
-        }
-
-        AggregateValidator usernameValidators = new AggregateValidator();
-        public void RegisterUsernameValidator(params IValidator[] items)
+        AggregateValidator<TAccount> usernameValidators = new AggregateValidator<TAccount>();
+        public void RegisterUsernameValidator(params IValidator<TAccount>[] items)
         {
             usernameValidators.AddRange(items);
         }
-        public IValidator UsernameValidator { get { return usernameValidators; } }
+        public IValidator<TAccount> UsernameValidator { get { return usernameValidators; } }
 
-        AggregateValidator passwordValidators = new AggregateValidator();
-        public void RegisterPasswordValidator(params IValidator[] items)
+        AggregateValidator<TAccount> passwordValidators = new AggregateValidator<TAccount>();
+        public void RegisterPasswordValidator(params IValidator<TAccount>[] items)
         {
             passwordValidators.AddRange(items);
         }
-        public IValidator PasswordValidator { get { return passwordValidators; } }
-        
-        AggregateValidator emailValidators = new AggregateValidator();
-        public void RegisterEmailValidator(params IValidator[] items)
+        public IValidator<TAccount> PasswordValidator { get { return passwordValidators; } }
+
+        AggregateValidator<TAccount> emailValidators = new AggregateValidator<TAccount>();
+        public void RegisterEmailValidator(params IValidator<TAccount>[] items)
         {
             emailValidators.AddRange(items);
         }
-        public IValidator EmailValidator { get { return emailValidators; } }
+        public IValidator<TAccount> EmailValidator { get { return emailValidators; } }
 
         EventBus eventBus = new EventBus();
         public IEventBus EventBus { get { return eventBus; } }
         public void AddEventHandler(params IEventHandler[] handlers)
         {
             eventBus.AddRange(handlers);
+        }
+        
+        EventBus validationBus = new EventBus();
+        public IEventBus ValidationBus { get { return validationBus; } }
+        public void AddValidationHandler(params IEventHandler[] handlers)
+        {
+            validationBus.AddRange(handlers);
+        }
+        
+        public ITwoFactorAuthenticationPolicy TwoFactorAuthenticationPolicy { get; set; }
+        public ICrypto Crypto { get; set; }
+        public Func<TAccount, IEnumerable<Claim>> CustomUserPropertiesToClaimsMap { get; set; }
+    }
+    
+    public class MembershipRebootConfiguration : MembershipRebootConfiguration<UserAccount>
+    {
+        public MembershipRebootConfiguration()
+            : this(SecuritySettings.Instance)
+        {
+        }
+
+        public MembershipRebootConfiguration(SecuritySettings securitySettings)
+            : base(securitySettings)
+        {
         }
     }
 }

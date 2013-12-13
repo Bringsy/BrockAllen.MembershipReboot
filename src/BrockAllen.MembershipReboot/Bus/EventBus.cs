@@ -7,8 +7,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace BrockAllen.MembershipReboot
 {
@@ -55,7 +53,7 @@ namespace BrockAllen.MembershipReboot
         }
     }
 
-    public class EventBus : List<IEventHandler>, IEventBus
+    class EventBus : List<IEventHandler>, IEventBus
     {
         Dictionary<Type, IEnumerable<IEventHandler>> handlerCache = new Dictionary<Type, IEnumerable<IEventHandler>>();
         GenericMethodActionBuilder<IEventHandler, IEvent> actions = new GenericMethodActionBuilder<IEventHandler, IEvent>(typeof(IEventHandler<>), "Handle");
@@ -89,6 +87,17 @@ namespace BrockAllen.MembershipReboot
                 handlerCache.Add(eventType, handlers);
             }
             return handlerCache[eventType];
+        }
+    }
+
+    class AggregateEventBus : List<IEventBus>, IEventBus
+    {
+        public void RaiseEvent(IEvent evt)
+        {
+            foreach (var eb in this)
+            {
+                eb.RaiseEvent(evt);
+            }
         }
     }
 }

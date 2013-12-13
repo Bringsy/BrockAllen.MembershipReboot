@@ -1,11 +1,12 @@
 # What is MembershipReboot
 
-The MembershipReboot project is intended as a user account and identity management library. It has nothing to do with the ASP.NET Membership Provider (but was inspired by it). MembershipReboot was initiated due to [frustrations](http://brockallen.com/2012/06/04/membership-is-not-the-same-as-forms-authentication/) with the built-in ASP.NET Membership system. The goals are to improve upon and provide missing features from ASP.NET Membership.
+MembershipReboot is a user identity management and authentication library. It has nothing to do with the ASP.NET Membership Provider, but was inspired by it due to [frustrations](http://brockallen.com/2012/09/02/think-twice-about-using-membershipprovider-and-simplemembership/) with the built-in ASP.NET Membership system. The goals are to improve upon and provide missing features from ASP.NET Membership. It is designed to encapsulate the important security logic while leaving most of the other aspects of account management either configurable or extensible for application developers to customize as needed.
 
 Some of the features of MembershipReboot are:
 
 * single- or multi-tenant account management
 * flexible account storage design (relational/SQL or object/NoSql)
+	* samples using both EF and RavenDB
 * claims-aware user identities
 * support for account registration, email verification, password reset, etc.
 * account lockout for multiple failed login attempts (password guessing)
@@ -13,15 +14,17 @@ Some of the features of MembershipReboot are:
 * customizable username, password and email validation
 * notification system for account activity and updates (e.g. for auditing)
 * account linking with external identity providers (enterprise or social)
+* supports certificate based authentication
 * proper password storage (via PBKDF2)
 	* configurable iterations
 	* defaults to OWASP recommendations for iterations (e.g. 64K in year 2012)
+* two factor authentication support via mobile phone SMS messages or client certificates
 
 The most common use case will be to integrate this into an ASP.NET or ASP.NET MVC application, though the library can also be used over a network as a service.
 
 # Getting Started with MembershipReboot
 
-There is a core project (BrockAllen.MembershipReboot), a unit test project and several sample applications demonstrating various use-cases. The best way to see MembershipReboot in action is to start with the SingleTenantWebApp sample in BrockAllen.MembershipReboot\samples\CurrentSamples.
+There is a core project (BrockAllen.MembershipReboot), two projects to implement the storage of the user account data (one uses EF, the other uses RavenDB), and a unit test project. There are also several sample applications demonstrating various use-cases. The best way to see MembershipReboot in action is to start with the SingleTenantWebApp from the samples folder.
 
 ## MembershipReboot, Claims and Windows Identity Foundation (WIF)
 
@@ -59,8 +62,6 @@ and
 
 MembershipReboot allows for some flexibility in how it manages user accounts via its SecuritySettings class. It has these properties:
 
-* ConnectionStringName (string)
-	* the connection string to use if using the default database
 * MultiTenant (bool)
 	* if the deployment is to support multi-tenant
 * DefaultTenant (string)
@@ -112,3 +113,7 @@ The default configuration uses the .NET SMTP configuration to send emails. To ru
 ## Database Configuration
 
 The samples use Entiy Framework and SQL Server Compact. You don't need to and can configure your own repository (such as SQL Azure, or even a NoSql database). See the samples for an example.
+
+## Documentation
+
+There is preliminary documentation [here](https://github.com/brockallen/BrockAllen.MembershipReboot/wiki).

@@ -4,8 +4,8 @@
  */
 
 using System;
-using System.Linq;
 using System.Configuration;
+using System.Linq;
 
 namespace BrockAllen.MembershipReboot
 {
@@ -15,10 +15,10 @@ namespace BrockAllen.MembershipReboot
 
         static SecuritySettings()
         {
-            Instance = FromConfig();
+            Instance = FromConfiguration();
         }
 
-        static SecuritySettings FromConfig()
+        public static SecuritySettings FromConfiguration()
         {
             var instance = new SecuritySettings();
             var configSection = GetConfigSection();
@@ -40,7 +40,6 @@ namespace BrockAllen.MembershipReboot
             return (SecuritySettings)System.Configuration.ConfigurationManager.GetSection(SectionName);
         }
 
-        private const string CONNECTIONSTRINGNAME = "connectionStringName";
         private const string MULTITENANT = "multiTenant";
         private const string DEFAULTTENANT = "defaultTenant";
         private const string EMAILISUSERNAME = "emailIsUsername";
@@ -53,84 +52,77 @@ namespace BrockAllen.MembershipReboot
         private const string PASSWORDHASHINGITERATIONCOUNT = "passwordHashingIterationCount";
         private const string PASSWORDRESETFREQUENCY = "passwordResetFrequency";
 
-        [ConfigurationProperty(CONNECTIONSTRINGNAME, DefaultValue = "MembershipReboot")]
-        public string ConnectionStringName
-        {
-            get { return (string)this[CONNECTIONSTRINGNAME]; }
-            set { this[CONNECTIONSTRINGNAME] = value; }
-        }
-
-        [ConfigurationProperty(MULTITENANT, DefaultValue = false)]
+        [ConfigurationProperty(MULTITENANT, DefaultValue = MembershipRebootConstants.SecuritySettingDefaults.MultiTenant)]
         public bool MultiTenant
         {
             get { return (bool)this[MULTITENANT]; }
             set { this[MULTITENANT] = value; }
         }
 
-        [ConfigurationProperty(DEFAULTTENANT, DefaultValue = "default")]
+        [ConfigurationProperty(DEFAULTTENANT, DefaultValue = MembershipRebootConstants.SecuritySettingDefaults.DefaultTenant)]
         public string DefaultTenant
         {
             get { return (string)this[DEFAULTTENANT]; }
             set { this[DEFAULTTENANT] = value; }
         }
 
-        [ConfigurationProperty(EMAILISUSERNAME, DefaultValue = false)]
+        [ConfigurationProperty(EMAILISUSERNAME, DefaultValue = MembershipRebootConstants.SecuritySettingDefaults.EmailIsUsername)]
         public bool EmailIsUsername
         {
             get { return (bool)this[EMAILISUSERNAME]; }
             set { this[EMAILISUSERNAME] = value; }
         }
 
-        [ConfigurationProperty(USERNAMESUNIQUEACROSSTENANTS, DefaultValue = false)]
+        [ConfigurationProperty(USERNAMESUNIQUEACROSSTENANTS, DefaultValue = MembershipRebootConstants.SecuritySettingDefaults.UsernamesUniqueAcrossTenants)]
         public bool UsernamesUniqueAcrossTenants
         {
             get { return (bool)this[USERNAMESUNIQUEACROSSTENANTS]; }
             set { this[USERNAMESUNIQUEACROSSTENANTS] = value; }
         }
 
-        [ConfigurationProperty(REQUIREACCOUNTVERIFICATION, DefaultValue = true)]
+        [ConfigurationProperty(REQUIREACCOUNTVERIFICATION, DefaultValue = MembershipRebootConstants.SecuritySettingDefaults.RequireAccountVerification)]
         public bool RequireAccountVerification
         {
             get { return (bool)this[REQUIREACCOUNTVERIFICATION]; }
             set { this[REQUIREACCOUNTVERIFICATION] = value; }
         }
 
-        [ConfigurationProperty(ALLOWLOGINAFTERACCOUNTCREATION, DefaultValue = true)]
+        [ConfigurationProperty(ALLOWLOGINAFTERACCOUNTCREATION, DefaultValue = MembershipRebootConstants.SecuritySettingDefaults.AllowLoginAfterAccountCreation)]
         public bool AllowLoginAfterAccountCreation
         {
             get { return (bool)this[ALLOWLOGINAFTERACCOUNTCREATION]; }
             set { this[ALLOWLOGINAFTERACCOUNTCREATION] = value; }
         }
 
-        [ConfigurationProperty(ACCOUNTLOCKOUTFAILEDLOGINATTEMPTS, DefaultValue = 10)]
+        [ConfigurationProperty(ACCOUNTLOCKOUTFAILEDLOGINATTEMPTS, DefaultValue = MembershipRebootConstants.SecuritySettingDefaults.AccountLockoutFailedLoginAttempts)]
         public int AccountLockoutFailedLoginAttempts
         {
             get { return (int)this[ACCOUNTLOCKOUTFAILEDLOGINATTEMPTS]; }
             set { this[ACCOUNTLOCKOUTFAILEDLOGINATTEMPTS] = value; }
         }
 
-        [ConfigurationProperty(ACCOUNTLOCKOUTDURATION, DefaultValue="00:05:00")]
+        [ConfigurationProperty(ACCOUNTLOCKOUTDURATION, DefaultValue = MembershipRebootConstants.SecuritySettingDefaults.AccountLockoutDuration)]
         public TimeSpan AccountLockoutDuration
         {
             get { return (TimeSpan)this[ACCOUNTLOCKOUTDURATION]; }
             set { this[ACCOUNTLOCKOUTDURATION] = value; }
         }
 
-        [ConfigurationProperty(ALLOWACCOUNTDELETION, DefaultValue = true)]
+        [ConfigurationProperty(ALLOWACCOUNTDELETION, DefaultValue = MembershipRebootConstants.SecuritySettingDefaults.AllowAccountDeletion)]
         public bool AllowAccountDeletion
         {
             get { return (bool)this[ALLOWACCOUNTDELETION]; }
             set { this[ALLOWACCOUNTDELETION] = value; }
         }
 
-        [ConfigurationProperty(PASSWORDHASHINGITERATIONCOUNT, DefaultValue = 0)]
+        [ConfigurationProperty(PASSWORDHASHINGITERATIONCOUNT, DefaultValue = MembershipRebootConstants.SecuritySettingDefaults.PasswordHashingIterationCount)]
         public int PasswordHashingIterationCount
         {
             get { return (int)this[PASSWORDHASHINGITERATIONCOUNT]; }
             set { this[PASSWORDHASHINGITERATIONCOUNT] = value; }
         }
 
-        [ConfigurationProperty(PASSWORDRESETFREQUENCY, DefaultValue = 0)]
+        [ConfigurationProperty(PASSWORDRESETFREQUENCY, DefaultValue = MembershipRebootConstants.SecuritySettingDefaults.PasswordResetFrequency)]
         public int PasswordResetFrequency
         {
             get { return (int)this[PASSWORDRESETFREQUENCY]; }
